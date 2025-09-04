@@ -119,8 +119,6 @@ def train(args, domains_interval):
     save_interval = args.save_interval
     saved_model_folder, saved_image_folder = get_dir(args)
 
-    wandb.init(project="DTLS_journal", name=args.name)
-
     num_domains = len(domains_interval)
     
     if use_cuda:
@@ -221,18 +219,13 @@ def train(args, domains_interval):
 
         err_mse = ((recon_img - real_image)**2).mean()
         updated_score = discriminator(recon_img)
-        err_domain = BCE_loss(updated_score, torch.ones_like(updated_score)) * 2e-3
+        err_domain = BCE_loss(updated_score, torch.ones_like(updated_score)) * 1e-3
         err_var = torch.abs(torch.var(recon_img) - torch.var(real_image)).mean()
 
         (err_mse + err_var + err_domain).backward()
         optimizer_enc.step()
         optimizer_dec.step()
 
-
-        # wandb.log({"latent realness loss": err_latent.item(), "Discriminator fake loss": dis_err_fake.item(), "Discriminator real loss": dis_err_real.item()}) #, "latent loss": err_latent.item()})
-        wandb.log({"MSE loss": err_mse.item(), "latent realness loss": err_domain.item(), "Variance loss": err_var.item(),
-                   "Discriminator fake loss": dis_err_fake.item(), "Discriminator real loss": dis_err_real.item()})
-        # wandb.log({"MSE loss": err_mse.item(), "SSIM loss": err_ssim.item()})
 
         ### Averaging parameters
         for p, avg_p in zip(encoder.parameters(), ema_encoder):
@@ -287,8 +280,6 @@ def train(args, domains_interval):
                 recon_img.add(1).mul(0.5),
                 real_image.add(1).mul(0.5)]),
                 saved_image_folder + '/training_%d.jpg' % iteration, nrow=real_image.shape[0])
-            wandb.log({"Checkpoint result": wandb.Image(saved_image_folder+'/%d.jpg'%iteration)})
-            wandb.log({"Result in domains": wandb.Image(saved_image_folder+'/domains_%d.jpg'%iteration)})
 
         if iteration % (save_interval*50) == 0 or iteration == total_iterations:
             torch.save({'enc':encoder.state_dict(), 'dec':decoder.state_dict()}, saved_model_folder+'/%d.pth'%iteration)
@@ -298,21 +289,18 @@ def train(args, domains_interval):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='region gan')
 
-    parser.add_argument('--path', type=str, default='/hdda/Datasets/Face_super_resolution/images1024x1024', help='path of resource dataset, should be a folder that has one or many sub image folders inside')
+    parser.add_argument('--path', type=str, default='images1024x1024', help='path of resource dataset, should be a folder that has one or many sub image folders inside')
     parser.add_argument('--output_path', type=str, default='./', help='Output path for the train results')
     parser.add_argument('--cuda', type=int, default=1, help='index of gpu to use')
-    parser.add_argument('--name', type=str, default='32_1024_ununeven_mse_gan_var_less_para_avg', help='experiment name')
-    parser.add_argument('--iter', type=int, default=200001, help='number of iterations')
+    parser.add_argument('--name', type=str, default='DTLS_1024_FFHQ', help='experiment name')
+    parser.add_argument('--iter', type=int, default=300001, help='number of iterations')
     parser.add_argument('--start_iter', type=int, default=0, help='the iteration to start training')
     parser.add_argument('--batch_size', type=int, default=2, help='mini batch number of images')
     parser.add_argument('--im_size', type=int, default=1024, help='image resolution')
     parser.add_argument('--ckpt', type=str, default='None', help='checkpoint weight path if have one')
-    parser.add_argument('--workers', type=int, default=2, help='number of workers for dataloader')
-    parser.add_argument('--save_interval', type=int, default=100, help='number of iterations to save model')
+    parser.add_argument('--workers', type=int, default=0, help='number of workers for dataloader')
+    parser.add_argument('--save_interval', type=int, default=10000, help='number of iterations to save model')
     
-    ### Args for DTLS ###
-    # domains_interval =[512, 448, 384, 320, 256, 64, 16] #512
-    # domains_interval =[256, 208, 160, 112, 64, 32, 16] # 256
     domains_interval =[1024, 896, 768, 512, 256, 128, 32] # 1024
 
     args = parser.parse_args()
