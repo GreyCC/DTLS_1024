@@ -105,7 +105,6 @@ def inference(args, domains_interval):
     decoder.to(device)
 
     for n in tqdm(range(args.samples)):
-
         gt_img = next(dataloader).to(device)
         target_domain = np.ones(gt_img.shape[0]) * (num_domains - 1)
         lr_img = downgrade_in_seq(gt_img.clone(), target_domain, domains_interval)
@@ -131,12 +130,6 @@ def inference(args, domains_interval):
 
                 sr_img = downgrade_in_seq(result, t - 1, domains_interval)
 
-        # vutils.save_image(torch.cat([
-        #     lr_img.add(1).mul(0.5),
-        #     result.add(1).mul(0.5),
-        #     gt_img.add(1).mul(0.5)]),
-        #     saved_image_folder + '/with_gt/%d.jpg' % n)
-
         vutils.save_image(result.add(1).mul(0.5),
                           saved_image_folder + '/result_only/%d.jpg' % n)
 
@@ -144,26 +137,17 @@ def inference(args, domains_interval):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='DTLS')
 
-    parser.add_argument('--path', type=str, default='/hdda/Datasets/celeba/data1024x1024',
+    parser.add_argument('--path', type=str, default='NLQ_faces',
                         help='path of resource dataset, should be a folder that has one or many sub image folders inside')
-    parser.add_argument('--output_path', type=str, default='32_1024_test_on_celeba_even', help='Output path for the train results')
-    parser.add_argument('--cuda', type=int, default=1, help='index of gpu to use')
-    # parser.add_argument('--name', type=str, default='32_1024_test_on_celeba_uneven', help='experiment name')
+    parser.add_argument('--output_path', type=str, default='DTLS_1024_NLQ_eval', help='Output path for the train results')
+    parser.add_argument('--cuda', type=int, default=0, help='index of gpu to use')
     parser.add_argument('--batch_size', type=int, default=1, help='mini batch number of images')
     parser.add_argument('--im_size', type=int, default=1024, help='image resolution')
-    parser.add_argument('--samples', type=int, default=2000, help='number of samples to be SR')
-
-    parser.add_argument('--ckpt', type=str, default="150000_32_1024_even.pth") #'train_results/'
-                                                    # 'DTLS_super_resolution_32_1024_uneven_iii/models/200000.pth',
-                                                    #     help='checkpoint weight path if have one')
-
+    parser.add_argument('--samples', type=int, default=30, help='number of samples to be SR')
+    parser.add_argument('--ckpt', type=str, default="train_results/DTLS_1024_FFHQ/300000.pth")
     parser.add_argument('--workers', type=int, default=0, help='number of workers for dataloader')
 
-    ### Args for DTLS ###
-    # domains_interval =[512, 448, 384, 320, 256, 64, 16] #512
-    # domains_interval =[256, 208, 160, 112, 64, 32, 16] # 256
-    domains_interval = [1024, 896, 768, 512, 256, 128, 32]  # 1024
 
+    domains_interval = [1024, 896, 768, 512, 256, 128, 32] 
     args = parser.parse_args()
-
     inference(args, domains_interval)
