@@ -8,7 +8,8 @@ Chun-Chuen Hui, Wan-Chi Siu, and Ngai-Fong Law, "Domain Transfer in Latent Space
 
 
 ## Dataset
-First, you need to download the dataset for training, in our experimental session, we utilize FFHQ dataset, you can download the dataset with the following link: [https://github.com/NVlabs/ffhq-dataset](https://github.com/NVlabs/ffhq-dataset)
+First, you need to download the dataset for training, in our experimental session, we utilize FFHQ dataset, you can download the dataset directly from this link:
+https://drive.google.com/file/d/1WvlAIvuochQn_L_f9p3OdFdTiSLlnnhv/view?usp=drive_link[https://drive.google.com/file/d/1WvlAIvuochQn_L_f9p3OdFdTiSLlnnhv/view?usp=drive_link]
 
 After finish the download of the dataset, you can move the dataset folder inside the folder of DTLS_1024 (This program code).
 
