@@ -1,6 +1,6 @@
 # Domain Transfer in Latent Space (DTLS) for Image Super-Resolution
 
-Official code for **“Domain Transfer in Latent Space (DTLS) Wins on Image Super-Resolution — A Non-Denoising Model,” 2026, Under Revision in Transaction of Consumer Electronics.** 
+Official code for **“Domain Transfer in Latent Space (DTLS) Wins on Image Super-Resolution — A Non-Denoising Model.”** DTLS reconstructs high-resolution face images from naturally degraded low-resolution inputs without explicitly denoising the input first.
 
 > **Project status:** This repository is research code. The commands below describe the intended FFHQ workflow. Please read [Important implementation notes](#important-implementation-notes) before launching a long training run.
 
@@ -171,9 +171,28 @@ python train.py \
   --start_iter 300000
 ```
 
+## Downloadable pretrained checkpoints
+
+Two pretrained checkpoints are available for download from Google Drive:
+
+| Checkpoint | Intended use | Download | Suggested local path |
+| --- | --- | --- | --- |
+| Generalized model | Super-resolution of natural low-resolution (NLR) images | [Download the generalized NLR checkpoint](https://drive.google.com/file/d/1VxzoGEFfH96L9YHUmaxmlBpRJUUUugzE/view?usp=sharing) | `pretrained_weights/DTLS_generalized_NLR.pth` |
+| Experimental-study model | Reproducing the experiment-study evaluation | [Download the experimental-study checkpoint](https://drive.google.com/file/d/1Uy9YxYiLJ-c5rqWmOtHCivn5LnWK5rZK/view?usp=sharing) | `pretrained_weights/DTLS_experiment_study.pth` |
+
+Download both files from Google Drive and place them in a local `pretrained_weights/` directory. The filenames above are suggestions; if you choose different filenames, use the actual paths in `--ckpt`.
+
+```bash
+mkdir -p pretrained_weights
+# Download the two files using the Google Drive links above, then verify:
+ls -lh pretrained_weights/
+```
+
+The evaluation code expects a PyTorch checkpoint containing `enc` and `dec` state dictionaries. Do not pass the Google Drive URL directly to `--ckpt`; download the file first and pass its local filesystem path.
+
 ## Inference
 
-Run inference with a trained checkpoint:
+Run inference with a trained or downloaded checkpoint:
 
 ```bash
 python eval.py \
@@ -188,6 +207,36 @@ The results are written to:
 ```text
 eval/DTLS_1024_NLR_test/
 ```
+
+### Evaluate the generalized natural-LR model
+
+Use the generalized checkpoint for natural low-resolution face images. For example, with the suggested local filename:
+
+```bash
+python eval.py \
+  --path NLQ_Faces \
+  --cuda 0 \
+  --batch_size 1 \
+  --output_path DTLS_generalized_NLR_results \
+  --ckpt pretrained_weights/DTLS_generalized_NLR.pth
+```
+
+Results will be saved under `eval/DTLS_generalized_NLR_results/`. Change `--cuda 0` to another GPU index when necessary.
+
+### Evaluate the experimental-study model
+
+Use the experimental-study checkpoint when reproducing the experiment-study results:
+
+```bash
+python eval.py \
+  --path NLQ_Faces \
+  --cuda 0 \
+  --batch_size 1 \
+  --output_path DTLS_experiment_study_results \
+  --ckpt pretrained_weights/DTLS_experiment_study.pth
+```
+
+Results will be saved under `eval/DTLS_experiment_study_results/`. To evaluate another image folder, replace `NLQ_Faces` with the path to that folder. The active evaluation path recursively finds `.jpg`, `.jpeg`, and `.png` files.
 
 ### Inference arguments
 
@@ -212,7 +261,7 @@ The evaluation script currently preserves each input filename when saving its re
 - Saved training arguments: `train_results/<experiment-name>/args.txt`
 - Evaluation results: `eval/<output-path>/`
 
-Checkpoints are not included in the source repository. Download or train a checkpoint before running evaluation, and ensure the checkpoint path is correct relative to the repository root.
+The downloadable checkpoints are hosted on Google Drive rather than committed to the repository. Download one before running evaluation, and ensure the checkpoint path is correct relative to the repository root.
 
 ## Important implementation notes
 
@@ -269,7 +318,7 @@ If you use this code or method in your research, please cite:
 @article{hui2025dtls,
   title   = {Domain Transfer in Latent Space (DTLS) Wins on Image Super-Resolution - A Non-Denoising Model},
   author  = {Hui, Chun-Chuen and Siu, Wan-Chi and Law, Ngai-Fong},
-  year    = {2026}
+  year    = {2025}
 }
 ```
 
