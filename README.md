@@ -9,6 +9,7 @@ Official code for **“Domain Transfer in Latent Space (DTLS) Wins on Image Supe
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Dataset](#dataset)
+- [Google Colab demo](#google-colab-demo)
 - [Training](#training)
 - [Inference](#inference)
 - [Outputs](#outputs)
@@ -108,6 +109,25 @@ DTLS_1024/
 ```
 
 If the folder is not included in your checkout, create it and add your own low-resolution inputs. Supported input extensions are `.jpg`, `.jpeg`, and `.png`.
+
+## Google Colab demo
+
+Run DTLS inference on a free or paid Colab GPU without configuring a local Python environment:
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/GreyCC/DTLS_1024/blob/main/DTLS_Colab_Inference.ipynb)
+
+The notebook automatically:
+
+1. Clones this repository.
+2. Installs the required inference dependencies.
+3. Downloads the generalized natural-low-resolution checkpoint.
+4. Downloads the example images from the project’s [Google Drive folder](https://drive.google.com/drive/folders/1bDMjDNe_bUEnQIeqS3alBOvtCRLvpZhv?usp=sharing).
+5. Runs `eval.py` on the Colab GPU.
+6. Displays the super-resolved images in the notebook.
+
+Before running the notebook, select **Runtime → Change runtime type → T4 GPU** (or another GPU). The notebook uses the generalized checkpoint by default. It also explains how to switch to the experimental-study checkpoint or upload your own images.
+
+The notebook is available in the repository as [`DTLS_Colab_Inference.ipynb`](DTLS_Colab_Inference.ipynb).
 
 ## Training
 
