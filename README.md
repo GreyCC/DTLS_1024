@@ -269,7 +269,7 @@ If you use this code or method in your research, please cite:
 @article{hui2025dtls,
   title   = {Domain Transfer in Latent Space (DTLS) Wins on Image Super-Resolution - A Non-Denoising Model},
   author  = {Hui, Chun-Chuen and Siu, Wan-Chi and Law, Ngai-Fong},
-  year    = {2025}
+  year    = {2026}
 }
 ```
 
