@@ -272,7 +272,7 @@ Results will be saved under `eval/DTLS_experiment_study_results/`. To evaluate a
 | `--samples` | `4` | Number of samples in the script interface. |
 | `--input_folder` | `None` | Reserved for an alternative input path; the corresponding branch is currently commented out in `eval.py`. |
 
-The evaluation script currently preserves each input filename when saving its result. It also upsamples the generated result to 512 pixels before saving; inspect `eval.py` if you need a different output resolution.
+The evaluation script currently preserves each input filename when saving its result. It also upsamples the generated result to 512 pixels before saving; inspect `eval.py` if you need a different output resolution. It requires a CUDA-enabled device; the Colab notebook checks this before inference and prints the evaluator’s full error output if a run fails.
 
 ## Outputs
 
