@@ -51,7 +51,10 @@ class Dataset(data.Dataset):
 
     def __getitem__(self, index):
         path = self.paths[index]
-        img = Image.open(path)
+        # The network expects RGB input. PNG files may be RGBA (or grayscale),
+        # so normalize every image to exactly three channels before ToTensor.
+        with Image.open(path) as opened_image:
+            img = opened_image.convert('RGB')
         return self.transform(img), str(path)
 
 transform = transforms.Compose([
